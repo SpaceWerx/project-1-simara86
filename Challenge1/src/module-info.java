@@ -1,0 +1,2 @@
+module Challenge1 {
+}
