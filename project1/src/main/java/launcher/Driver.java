@@ -1,51 +1,31 @@
 package launcher;
-	import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-	public class Driver {
+//import models.Menu;
+import utilities.ConnectionFactory;
+
+public class Driver {
+	public static void main(String[] args) throws SQLException {
+	
 		
-		public static void main (String[] args) {
-			Scanner scan= new Scanner(System.in);
+		//Testing Database Connectivity - just testing whether our Connection (from ConnectionFactory) is successful
+		try(Connection conn = ConnectionFactory.getConnection()){
+			System.out.println("Connection Successful :)");
+		} catch(SQLException e) {
+			System.out.println("Connection failed");
+			e.printStackTrace();
+		}	
+
+	
+		//Make the menu	run, its only 2 lines of code	
+	//	Menu menu = new Menu();
 			
-			
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("*********************************");
-				System.out.println();
-				System.out.println("Welcome to Reimbursement Menu");
-				System.out.println();
-				System.out.println("*********************************");
-				System.out.println();
-				System.out.println();
-				System.out.println("Select a number from the following Menu");
-				System.out.println();
-				System.out.println("1- Lodging");
-				System.out.println("2- Travel");
-				System.out.println("3- Food");
-				System.out.println("4- Other");
-				
-			switch	(scan.nextInt()) {
-			
-			case 1: 
-				System.out.println("You've selected Lodging");
-				break;
-				
-			case 2:
-				System.out.println("You've selected Travel");
-				break;
-				
-			case 3:
-				System.out.println("You've selected Food");
-				break;
-				
-			case 4:
-				System.out.println("You've selected Other");
-				break;
-			}
-				
-				
-			}
-		}
+	//	menu.displayMenu();
+	
+	}
+}
+		//}
 
 
 
