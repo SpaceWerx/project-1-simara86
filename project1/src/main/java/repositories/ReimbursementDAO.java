@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.spi.DirStateFactory.Result;
 import javax.net.ssl.SSLEngineResult.Status;
 
 import models.Reimbursement;
@@ -170,4 +171,63 @@ public class ReimbursementDAO {
 		return null;
 
 		}
+	
+	public int create(Reimbursement reimbursementToBeSubmitted) {
+		try (Connection connection = ConnectionFactory.getConnection()) {
+			String sql = "INSERT INTO ers_reimbursementd (author, description, type, status, amount) "
+					+ "VALUES (?,?,?::type, ?)"
+					+ "RETURNING ers_reimbursements.id";
+			
+           // We must use a prepared statement because we have parameters
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			// use the PreparedStatement objects methods to insert values into the query's ?s
+			// the value will come from the Reimbursement object we send in.
+			
+			preparedStatement.setInt(1, reimbursementToBeSubmitted.getAuthor());
+			preparedStatement.setString(2, reimbursementToBeSubmitted.getDescription());
+			preparedStatement.setObject(3, reimbursementToBeSubmitted.getType().name());
+			preparedStatement.setObject(4, reimbursementToBeSubmitted.getStatus());
+			preparedStatement.setDouble(5, reimbursementToBeSubmitted.getAmount());
+			
+			//We need to use the result set to retrieve the newly generated and returned the reimbursement record with the new id
+			ResultSet resultSet;
+			
+			// Here we are checking that the sql query executed and returned the reimbursement record with the new id
+			
+			if((resultSet = preparedStatement.executeQuery()) !=null) {
+				//must call this to get the returned reimbursement record id
+				resultSet.next();
+				return resultSet.getInt(1);
+			}
+				
+			}catch (SQLException e) {
+				System.out.println("Creating reimbursement has failed");
+				e.printStackTrace();
+			}
+		return 0;
+		}
+		
+	public void update(Reimbursement unprocessedReimbursement) {
+		
+		try (Connection connection = ConnectionFactory.getConnection()) {
+			String sql = "UPDATE ers_reimbursements SET resolver = ?, status =?::status WHERE id = ?";
+			
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			
+			//Setting the update parameters (?'s) with their respective values.
+			preparedStatement.setInt(1, unprocessedReimbursement.getResolver());
+			preparedStatement.setObject(2, unprocessedReimbursement.getStatus().name());
+			preparedStatement.setInt(3, unprocessedReimbursement.getId());
+			
+			// Executing the record update 
+			preparedStatement.executeUpdate();
+			
+			//Proclaim victory
+			System.out.println("Reimbursement Successfully Updated");
+		}catch (SQLException e) {
+			System.out.println("Updating Failed!");
+			e.printStackTrace();
+		}
+	}
 }
