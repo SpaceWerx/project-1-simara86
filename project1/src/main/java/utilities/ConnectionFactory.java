@@ -56,8 +56,8 @@ package utilities;
 	    	
 	    	//the url to my database schema
 	    	
-	    	//String url = "jdbc:postgresql://localhost:5432/postgres?currentSchema=p1demo";
-	    	String url ="jdbc:postgresql://localhost:java-fullstack.c25vje1kuttj.us-east-1.rds.amazonaws.com";
+	    	String url = "jdbc:postgresql://java-fullstack-batch.c25vje1kuttj.us-east-1.rds.amazonaws.com\"5432/postgres?currentSchema=P1";
+	    	
 	    	//your postgres username (should just be postgres)
 	    	String username = "postgres";
 	    	//your postgres password (hopefully just "password")
