@@ -4,71 +4,66 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.Reimbursement;
+import models.Role;
 import models.Status;
 import models.User;
+import repositories.ReimbursementDAO;
 
 public class ReimbursementService {
-
-	private List<Reimbursement> reimbursementByAuthor;
-	public void submittReimbursement(Reimbursement reimbursemetToBeSubmitted) {
+	
+	
+	//Instantiating the DAO and user service to utilize in various methods
+	ReimbursementDAO reimbursementDAO = new ReimbursementDAO();
+	UserService userService = new UserService();
+	
+	public List<Reimbursement> getPendingReimbursements(){return reimbursementDAO.getByStatus(Status.PENDING);}
 		
-		Reimbursement latestReimbursement = reimbursements.get(reimbursements.size() - 1);
-		int id = latestReimbursement.getId() + 1; //New Id is 1 higer thatn the previous highest
+	
+	
+	public List <Reimbursement> getResolvedReimbursements(){
+		List<Reimbursement> resolvedReimbursements = new ArrayList<>();
 		
-		reimbursemetToBeSubmitted.setId(id);
-		reimbursemetToBeSubmitted.setStatus(Status.PENDING);
-		reimbursements.add(reimbursemetToBeSubmitted);
-		
+		resolvedReimbursements.addAll(reimbursementDAO.getByStatus(Status.APPROVED));
+		resolvedReimbursements.addAll(reimbursementDAO.getByStatus(Status.DENIED));
+		return resolvedReimbursements;
 	}
-	public void update(Reimbursement unprocessedReimbursement, int resolverId, Status updateStatus) {
-		for (Reimbursement reimbursement : reimbursements) {
-			if(reimbursement.getId() == unprocessedReimbursemet.getId());
-			reimbursement.setResolver(resolverId);
-			reimbursement.setStatus(updateStatus);
-			return;
+
+	
+	public int submitReimbursement (Reimbursement reimbursementToBeSubmitted) {
+		
+		User employee = userService.getUserById(reimbursementToBeSubmitted.getAuthor());
+		
+		if(employee.getRole() != Role.EMPLOYEE) {
+			throw new IllegalArgumentException("Manager cannot submit reimbursement request.");
+		}else {
+			reimbursementToBeSubmitted.setStatus(Status.PENDING);
 			
+			return reimbursementDAO.create(reimbursementToBeSubmitted);
 		}
-		throw new RuntimeException("There was an error processing this reimbursement, plase try again");
 	}
 	
-	public List<Reimbursement> getPendingReimbursement(){
-		List<Reimbursement> pendingReimbursement = new ArrayList<>();
+	public Reimbursement update(Reimbursement unprocessedReimbursement, int resolverId, Status updatedStatus) {
+		User manager = userService.getUserById(resolverId);
 		
-		for (Reimbursement reimbursement : reimbursements) {
-			if (reimbursement.getStatus() == Status.PENDING) {
-				pendingReimbursement.add(reimbursement);
-			}
+		if(manager.getRole() != Role.MANAGER) {
+			throw new IllegalArgumentException("An Employee cannot process reimbursement request.");
+		}else {
+			unprocessedReimbursement.setResolver(resolverId);
+			unprocessedReimbursement.setStatus(updatedStatus); 
+			reimbursementDAO.update(unprocessedReimbursement);
+			return unprocessedReimbursement;
 		}
-		return pendingReimbursement;
 		
 	}
 	public Reimbursement getReimbursementById(int id) {
-		for (Reimbursement reimbursement : reimbursemets) {
-			if (reimbursement.getId() == id) {
-				return reimbursement;
-			}
+		return reimbursementDAO.getReimbursementById(id);
 		}
-		return getReimbursementById(0);
-	}
-	public List<Reimbursement> getResolvedReimbursement(){
-         List<Reimbursement> resolvedReimbursement = new ArrayList<>();
 		
-		for (Reimbursement reimbursement : reimbursements) {
-			if (reimbursement.getStatus() == Status.APPROVED) {
-				resolvedReimbursement.add(reimbursement);
-			}
-		}
-		return resolvedReimbursement;
+	public List<Reimbursement> getReimbursementByAuthor( int userId){
+		return reimbursementDAO.getReimbursementsByUser(userId);
 		
 	}
-	public List<Reimbursement> geReimbursementByAuthor(){
-        List<Reimbursement> userReimbursement = new ArrayList<>();
+	
+	}
 		
-		for (Reimbursement r: reimbursements) {
-			if (r.getAuthor() == userId || r.getResolver() == userId) {
-				userReimbursement.add(r);
-			}
-		}
-		return userReimbursement;
-}
-}
+	

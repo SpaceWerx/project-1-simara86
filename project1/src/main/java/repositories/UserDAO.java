@@ -1,9 +1,11 @@
 package repositories;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,44 +18,43 @@ import models.User;
 import utilities.ConnectionFactory;
 
 public class UserDAO {
+
+
 	
+
 	
-	
-	public List<User> getUserById(int userId) {
+	public User getUserById (int id) {
 		try(Connection conn = ConnectionFactory.getConnection()){
 			
-			ResultSet resultSet = null;
-			
-			String sql = "select * from user where user_id = ?;";
-			
-			PreparedStatement ps = conn.prepareStatement(sql);
-			
-			ps.setInt(1, userId);
-			
-			resultSet = ps.executeQuery();
-			
-			List<User> userList = new ArrayList<>();
-			
-			while(resultSet.next()) {
-				User u = new User(
-						resultSet.getInt("user_id"),
-						resultSet.getString("username"),
-						resultSet.getString("password"),
-						Role.valueOf(resultSet.getString("role"))
-					);
-				userList.add(u);
-			}
-			return userList;			
-		}
-		catch(SQLException e) {
-			System.out.println("Something went wrong");
-			e.printStackTrace();
-			return null;
-		}		
-		
-	}
+			String sql = "select * from ers_users where id = ?";
 
-	public List<User> getUserByUsername(String username){
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+			
+            if (resultSet.next()) {
+                return new User(
+                    resultSet.getInt("id"),
+                    resultSet.getString("username"),
+                    resultSet.getString("password"),
+                    Role.valueOf(resultSet.getString("role"))
+                        );
+            }
+        } catch (SQLException e) {
+
+            System.out.println("Something went wrong with getting user by id via the database!");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+	
+
+	public static User getByUsername(String username){
          
 		try(Connection conn = ConnectionFactory.getConnection()){
 			
@@ -69,25 +70,24 @@ public class UserDAO {
 			
 			List<User> userList = new ArrayList<>();
 			
-			while(resultSet.next()) {
-				User u = new User(
-						resultSet.getInt("user_id"),
-						resultSet.getString("username"),
-						resultSet.getString("password"),
-						Role.valueOf(resultSet.getString("role"))
-					);
-				userList.add(u);
-			}
-			return userList;			
+			if (resultSet.next()) {
+                return new User(
+                    resultSet.getInt("id"),
+                    resultSet.getString("username"),
+                    resultSet.getString("password"),
+                    Role.valueOf(resultSet.getString("role"))
+                        );
+            }		
 		}
 		catch(SQLException e) {
 			System.out.println("Something went wrong");
 			e.printStackTrace();
-			return null;
 		}		
 		
+		return null;
 	}
-	public List<User> getAllUser(){
+
+	public List<User> getAllUsers(){
 		try (Connection connection = ConnectionFactory.getConnection()) {
 			
 			List<User> users = new ArrayList<>();
@@ -119,7 +119,7 @@ public class UserDAO {
 
 		}
 	
-	public int create(User createdUser) {
+	public int create(User userToBeRegistered) {
 		try (Connection connection = ConnectionFactory.getConnection()) {
 			String sql = "INSERT INTO ers_users (id, username, password, role) "
 					+ "VALUES (?,?,?::type, ?)"
@@ -131,10 +131,10 @@ public class UserDAO {
 			// use the PreparedStatement objects methods to insert values into the query's ?s
 			// the value will come from the Reimbursement object we send in.
 			
-			preparedStatement.setInt(1, createdUser.getUserId());
-			preparedStatement.setString(2, createdUser.getUsername());
-			preparedStatement.setObject(4, createdUser.getPassword());
-			preparedStatement.setObject(3, createdUser.getRole().name());
+			preparedStatement.setInt(1, userToBeRegistered.getUserId());
+			preparedStatement.setString(2, userToBeRegistered.getUsername());
+			preparedStatement.setObject(4, userToBeRegistered.getPassword());
+			preparedStatement.setObject(3, userToBeRegistered.getRole().name());
 						
 			
 			ResultSet resultSet;
@@ -153,7 +153,7 @@ public class UserDAO {
 			}
 		return 0;
 		}
-		
-	
-	
 }
+
+	
+

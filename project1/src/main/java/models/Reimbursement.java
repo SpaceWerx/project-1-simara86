@@ -8,7 +8,7 @@ public class Reimbursement {
 	ReimbursementType type;
 	Status status;
 	double amount;
-//	
+	
 //	public Reimbursement(int id, int author, int resolver, String description, ReimbursementType type,
 //			Status status, double amount) {
 //		this.id = id;

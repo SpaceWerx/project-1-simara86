@@ -1,6 +1,6 @@
 package repositories;
 
-import java.beans.Statement;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.spi.DirStateFactory.Result;
+
 import javax.net.ssl.SSLEngineResult.Status;
 
 import models.Reimbursement;
@@ -53,7 +53,7 @@ public class ReimbursementDAO {
 	return null;
 
 }
-	
+	 
 	public List<Reimbursement>getReimbursementsByUser (int userId) {
 		
 		// try/catch block to catch SQL exception that can be thrown with connection
@@ -229,5 +229,10 @@ public class ReimbursementDAO {
 			System.out.println("Updating Failed!");
 			e.printStackTrace();
 		}
+	}
+
+	public List<Reimbursement> getByStatus(models.Status pending) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
