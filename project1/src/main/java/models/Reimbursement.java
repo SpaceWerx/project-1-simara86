@@ -9,22 +9,30 @@ public class Reimbursement {
 	Status status;
 	double amount;
 	
-//	public Reimbursement(int id, int author, int resolver, String description, ReimbursementType type,
-//			Status status, double amount) {
-//		this.id = id;
-//		this.author = author;
-//		this.resolver = resolver;
-//		this.description = description;
-//		this.type= type;
-//		this.status = status;
-//		this.amount = amount;
+	public Reimbursement(int id, int author, int resolver, String description, ReimbursementType type,
+			Status status, double amount) {
+		this.id = id;
+		this.author = author;
+		this.resolver = resolver;
+		this.description = description;
+		this.type= type;
+		this.status = status;
+		this.amount = amount;
+		
+	}
+	
+public Reimbursement(int id, int resolver, Status status) {
+		super();
+		this.id = id;
+		this.resolver = resolver;
+		this.status = status;
+	}
+
+//	public Reimbursement(int i, int j, int k, String string, ReimbursementType reimbursementType, Status status2, double d) {
 //		
 //	}
 	
-	public Reimbursement(int int1, int int2, int int3, int int4, ReimbursementType valueOf,
-			javax.net.ssl.SSLEngineResult.Status valueOf2, double double1) {
-		// TODO Auto-generated constructor stub
-	}
+	
 
 	public int getId() {
 		return id;

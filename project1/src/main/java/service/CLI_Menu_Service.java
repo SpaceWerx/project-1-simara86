@@ -1,13 +1,22 @@
 //package service;
 //
 //import java.util.List;
+//import java.util.Scanner;
+//
+//import com.fasterxml.jackson.databind.ObjectMapper;
 //
 //import models.Reimbursement;
 //import models.ReimbursementType;
 //import models.Role;
 //import models.User;
+//import service.UserService;
 //
 //public class CLI_Menu_Service{
+//	UserService userService = new UserService();
+//	ReimbursementService reimbursementService = new ReimbursementService();
+//	
+//	Scanner scan = new Scanner(System.in);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	public void displayMenu() {
 //		boolean menuOptions = true; //Using this to let the menu continue after user input
 //		
@@ -25,6 +34,7 @@
 //			System.out.println("2- Finance Manager Portal");
 //			System.out.println("0- Exit Application");
 //			
+//			
 //		// The user choose a menu option and the scanner takes the input and put into an int variable
 //		// Calls the promptSelection() helper method to handle validation
 //		// The parameters list the valid options that the user must choose from
@@ -34,10 +44,10 @@
 //		switch (firstChoice) {
 //		
 //		case 1: 
-//			handlePortal(Role.EMPLOYEE);
+//			handlePortal(Role.Employee);
 //			break;
 //		case 2: 
-//			handlePortal(Role.MANAGER);
+//			handlePortal(Role.Manager);
 //			break;
 //		case 0:
 //			System.out.println("\nHAve a greate day! Goodbye. ");
@@ -48,24 +58,30 @@
 //		
 //			
 //}//end of displayMenu method
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	public void displayEmployeeMenu(User employee) {
 //		boolean employeePortal = true;
 //		
 //		System.out.println("--------------------------------------------------------------");
-//		System.out.println("PLEASE ENTER THE NUMBER OF YOUR CHOICE");
+//		System.out.println("Welcome to the Employee Portal, " + employee.getUsername());
 //		System.out.println("--------------------------------------------------------------");
 //		System.out.println();
 //		while (employeePortal) {
+//			
+//			System.out.println("PLEASE ENTER THE NUMBER OF YOUR CHOICE");
+//			System.out.println("1-> View Previous Request");
+//			System.out.println("2-> Submit a Reimbursement");
+//			System.out.println("0-> Return to the Main Menu");
 //		
 //		//The user choose a menu option and the scanner takes the input and put  it into and int variable
-//		int employeeChoice = promptSelection(1,2,0);
+//		int firstChoice = promptSelection(1,2,0);
 //		
-//		switch (employeeChoice) {
+//		switch (firstChoice) {
 //		case 1: 
 //			displayPreviousRequest(employee);
 //			break;
 //		case 2: 
-//			displayReimbursement(employee);
+//			submitReimbursement(employee);
 //			break;
 //		case 0:
 //			System.out.println("Returning to Main Menu...");
@@ -76,26 +92,33 @@
 //	}
 //	
 //}
+//
 //	public void displayFinanceManagerMenu (User manager) {
 //		boolean managerPortal = true;
 //		
 //		System.out.println("--------------------------------------------------------");
-//		System.out.println("PLEASE ENTER THE NUMBER OF YOUR CHOICE");
+//		System.out.println("Welcome to the Manager Portal, " +manager.getUsername());
 //		System.out.println("--------------------------------------------------------");
 //		System.out.println();
 //		
 //		while (managerPortal) {
 //			
-//			int managerChoice = promptSelection(1,2,3,0);
+//			System.out.println("PLEASE ENTER THE NUMBER OF YOUR CHOICE");
+//			System.out.println("1-> View all pending reimbursements ");
+//			System.out.println("2 -> View all resolved reimbursement ");
+//			System.out.println("3-> Process a Reimbursement ");
+//			System.out.println("0-> Return to Main Menu ");
 //			
-//			switch (managerChoice) {
+//			int firstChoice = promptSelection(1,2,3,0);
+//			
+//			switch (firstChoice) {
 //			case 1:
-//				displayPendingReimbursements();
+//			//	displayPendingReimbursements();
 //				break;
 //			case 2:
-//				displayResolvedReimbursements();
+//			//	displayResolvedReimbursements();
 //			case 3:
-//				displayReimbursement(manager);
+//				submitReimbursement(manager);
 //				break;
 //			case 0:
 //				System.out.println("Returning to Main Menu...");
@@ -139,7 +162,7 @@
 //		
 //	}
 //	
-//  	public int paseIntegerInput(String input) {
+//  	public int parseIntegerInput(String input) {
 //	
 //	try {
 //		return Integer.parseInt(input);
@@ -162,7 +185,7 @@
 //  	}	
 //  	public void handlePortal(Role role) {
 //  		// get the List of employee from the repository layer
-//  		List<User> users = userService.getByROoe(role);
+//  		List<User> users = userService.getUserByRole(role);
 //  		
 //  		int[] ids = new int [users.size() + 1];
 //  		ids[users.size()] = 0;
@@ -186,9 +209,9 @@
 //  		if (userChoice == 0) {
 //  			return;
 //  		}
-//  		User employee = userService.getUsersById(userChoice);
+//  		User employee = userService.getUserById(userChoice);
 //  		
-//  		if (role == Role.MANAGER) {
+//  		if (role == Role.Manager) {
 //  			System.out.println("Opening Manager Portal for " + employee.getUsername());
 //  			displayFinanceManagerMenu(employee);
 //  		}else {
@@ -198,11 +221,11 @@
 //  		
 //  			
 //  	 }
-//  	public void displayPreviousRequest(User Employee) {
-//  		List<Reimbursement> reimbursements =rService.getReimbursementsByAuthor(employee.getUserId());
+//  	public void displayPreviousRequest(User employee) {
+//  		List<Reimbursement> reimbursements =reimbursementService.getReimbursementByAuthor(employee.getUserId());
 //  		
 //  		if (reimbursements.isEmpty()) {
-//  			System.out.println("No Previous REquest...");
+//  			System.out.println("No Previous Request...");
 //  			System.out.println("Returning to Previous Menu...");
 //  		}
 //  		for (Reimbursement r : reimbursements) {
@@ -252,8 +275,20 @@
 //  			}
 //  		}
 //  		System.out.println("Please enter a description/reason for your reimbursement rquest. ");
+//  		
 //  		reimbursementToBeSubmitted.setDescription(scan.nextLine());
-//  		if (rtbs)
+//  		if(reimbursementToBeSubmitted.getDescription().trim().equals("")) {
+//  			System.out.println("You cannot submit a request with an empty description, please explain the reason for your request.");
+//  		boolean valid = false;
+//  		while(!valid) {
+//  		//reimbursementToBeSubmitted.getDescription(scan.nextLine());
+//  		if(!reimbursementToBeSubmitted.getDescription().trim().equals("")) {
+//  			valid =true;
+//  		}
+//  		}
 //  	}
-
+//reimbursementService.submitReimbursement(reimbursementToBeSubmitted);
 //}
+//}
+//
+//

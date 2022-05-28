@@ -19,6 +19,11 @@ package models;
 		}
 		
 
+		public User() {
+			// TODO Auto-generated constructor stub
+		}
+
+
 		public int getUserId() {
 			return userId;
 		}
@@ -52,9 +57,7 @@ package models;
 			this.role = role;
 		}
 		
-	//	public List<User> getUsers() {
-		//	return users;
-	//	}
+	
 		
 
 	}
